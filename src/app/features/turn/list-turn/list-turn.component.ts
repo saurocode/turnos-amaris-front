@@ -19,6 +19,7 @@ export class ListTurnComponent implements OnInit, OnDestroy {
   loading = false;
   errorMessage = '';
   successMessage = '';
+  turnoAancelar: TurnoResponse | null = null;
   private intervalo: any;
 
   ngOnInit(): void {
@@ -78,5 +79,48 @@ export class ListTurnComponent implements OnInit, OnDestroy {
       'Cancelado': 'bi-slash-circle'
     };
     return iconos[estado] ?? 'bi-circle';
+  }
+
+  cancelarTurno(id: number): void {
+    if (!confirm('¿Estás seguro de que deseas cancelar este turno?')) return;
+
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.turnoService.actualizarEstado({ id, newStatus: 'Cancelado' }).subscribe({
+      next: () => {
+        this.successMessage = 'Turno cancelado correctamente';
+        this.cargarTurnos();
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.error || 'Error al cancelar el turno';
+      }
+    });
+  }
+
+  confirmarCancelacion(): void {
+    if (!this.turnoAancelar) return;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.turnoService.actualizarEstado({ id: this.turnoAancelar.id, newStatus: 'Cancelado' }).subscribe({
+      next: () => {
+        this.successMessage = `Turno ${this.turnoAancelar?.turnCode} cancelado correctamente`;
+        this.cerrarModalCancelar();
+        this.cargarTurnos();
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.error || 'Error al cancelar el turno';
+        this.cerrarModalCancelar();
+      }
+    });
+  }
+
+  abrirModalCancelar(turno: TurnoResponse): void {
+    this.turnoAancelar = turno;
+  }
+
+  cerrarModalCancelar(): void {
+    this.turnoAancelar = null;
   }
 }
