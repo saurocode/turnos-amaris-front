@@ -6,6 +6,8 @@ import { TurnoService } from '../../../core/services/turn';
 import { LocationService } from '../../../core/services/location';
 import { Location } from '../../../core/models/location.model';
 import { NavbarComponent  } from "../../../shared/components/navbar/navbar.component";
+import { ServiceService } from '../../../core/services/service';
+import { Service } from '../../../core/models/service.model';
 
 @Component({
   selector: 'app-create-turn',
@@ -19,19 +21,25 @@ export class CreateTurnComponent implements OnInit {
   private turnoService = inject(TurnoService);
   private locationService = inject(LocationService);
   private router = inject(Router);
+  private serviceService = inject(ServiceService);
 
-form: FormGroup = this.fb.group({
-  identification: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(15), Validators.pattern('^[0-9]+$')]],
-  idLocation: ['', Validators.required]
-});
 
+  form: FormGroup = this.fb.group({
+    identification: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(15), Validators.pattern('^[0-9]+$')]],
+    idLocation: ['', Validators.required],
+    serviceId: ['', Validators.required]   
+  });
+
+  services: Service[] = [];
   locations: Location[] = [];
   loading = false;
   loadingLocations = true;
+  loadingServices = false;
   errorMessage = '';
   successMessage = '';
 
   ngOnInit(): void {
+    this.cargarServicios();
     this.locationService.getAll().subscribe({
       next: (data) => {
         this.locations = data;
@@ -43,6 +51,14 @@ form: FormGroup = this.fb.group({
       }
     });
   }
+
+  cargarServicios(): void {
+  this.loadingServices = true;
+  this.serviceService.getAll().subscribe({
+    next: (data) => { this.services = data; this.loadingServices = false; },
+    error: () => { this.errorMessage = 'Error al cargar los servicios'; this.loadingServices = false; }
+  });
+}
 
   onSubmit(): void {
     if (this.form.invalid) return;

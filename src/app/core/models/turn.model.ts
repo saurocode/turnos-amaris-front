@@ -4,6 +4,7 @@ export interface Turno {
 export interface CrearTurnoDto {
   identification: string;
   idLocation: number;
+  serviceId: number;
 }
 
 export interface ActualizarTurnoDto {
@@ -17,6 +18,8 @@ export interface TurnoResponse {
   identification: string;
   idLocation: number;
   locationName: string;
+  serviceId: number;      
+  serviceName: string; 
   dateCreation: string;
   dateExpiration: string;
   dateActivation?: string;
