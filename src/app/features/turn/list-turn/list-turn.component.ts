@@ -19,19 +19,19 @@ export class ListTurnComponent implements OnInit, OnDestroy {
   loading = false;
   errorMessage = '';
   successMessage = '';
-  turnoAancelar: TurnoResponse | null = null;
-  private intervalo: any;
+  turnToCancel: TurnoResponse | null = null;
+  private interval: any;
 
   ngOnInit(): void {
-    this.cargarTurnos();
-    this.intervalo = setInterval(() => this.cargarTurnos(), 30000);
+    this.loadTurns();
+    this.interval = setInterval(() => this.loadTurns(), 30000);
   }
 
   ngOnDestroy(): void {
-    if (this.intervalo) clearInterval(this.intervalo);
+    if (this.interval) clearInterval(this.interval);
   }
 
-  cargarTurnos(): void {
+  loadTurns(): void {
     this.loading = true;
     this.turnoService.getAll().subscribe({
       next: (data) => {
@@ -45,13 +45,13 @@ export class ListTurnComponent implements OnInit, OnDestroy {
     });
   }
 
-  activarTurno(id: number): void {
+  activateTurn(id: number): void {
     this.errorMessage = '';
     this.successMessage = '';
-    this.turnoService.activar(id).subscribe({
+    this.turnoService.activate(id).subscribe({
       next: (turno) => {
         this.successMessage = `Turno ${turno.turnCode} activado correctamente`;
-        this.cargarTurnos();
+        this.loadTurns();
       },
       error: (err) => {
         this.errorMessage = err.error?.error || 'Error al activar el turno';
@@ -70,7 +70,7 @@ export class ListTurnComponent implements OnInit, OnDestroy {
     return clases[estado] ?? 'bg-secondary';
   }
 
-  getIconEstado(estado: string): string {
+  getStateIcon(estado: string): string {
     const iconos: Record<string, string> = {
       'Pendiente': 'bi-clock',
       'Activo': 'bi-check-circle',
@@ -81,16 +81,16 @@ export class ListTurnComponent implements OnInit, OnDestroy {
     return iconos[estado] ?? 'bi-circle';
   }
 
-  cancelarTurno(id: number): void {
+  cancelTurn(id: number): void {
     if (!confirm('¿Estás seguro de que deseas cancelar este turno?')) return;
 
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.turnoService.actualizarEstado({ id, newStatus: 'Cancelado' }).subscribe({
+    this.turnoService.updateStatus({ id, newStatus: 'Cancelado' }).subscribe({
       next: () => {
         this.successMessage = 'Turno cancelado correctamente';
-        this.cargarTurnos();
+        this.loadTurns();
       },
       error: (err) => {
         this.errorMessage = err.error?.error || 'Error al cancelar el turno';
@@ -98,29 +98,29 @@ export class ListTurnComponent implements OnInit, OnDestroy {
     });
   }
 
-  confirmarCancelacion(): void {
-    if (!this.turnoAancelar) return;
+  confirmCancellation(): void {
+    if (!this.turnToCancel) return;
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.turnoService.actualizarEstado({ id: this.turnoAancelar.id, newStatus: 'Cancelado' }).subscribe({
+    this.turnoService.updateStatus({ id: this.turnToCancel.id, newStatus: 'Cancelado' }).subscribe({
       next: () => {
-        this.successMessage = `Turno ${this.turnoAancelar?.turnCode} cancelado correctamente`;
-        this.cerrarModalCancelar();
-        this.cargarTurnos();
+        this.successMessage = `Turno ${this.turnToCancel?.turnCode} cancelado correctamente`;
+        this.closeCancelModal();
+        this.loadTurns();
       },
       error: (err) => {
         this.errorMessage = err.error?.error || 'Error al cancelar el turno';
-        this.cerrarModalCancelar();
+        this.closeCancelModal();
       }
     });
   }
 
-  abrirModalCancelar(turno: TurnoResponse): void {
-    this.turnoAancelar = turno;
+  openCancelModal(turno: TurnoResponse): void {
+    this.turnToCancel = turno;
   }
 
-  cerrarModalCancelar(): void {
-    this.turnoAancelar = null;
+  closeCancelModal(): void {
+    this.turnToCancel = null;
   }
 }
