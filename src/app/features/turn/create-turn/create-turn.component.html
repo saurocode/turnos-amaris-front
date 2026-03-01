@@ -1,0 +1,112 @@
+<app-navbar></app-navbar>
+
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+
+      <div class="d-flex align-items-center mb-4">
+        <a routerLink="/turnos" class="btn btn-outline-secondary btn-sm me-3">
+          <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+          <h4 class="mb-0 fw-bold">Nuevo Turno</h4>
+          <small class="text-muted">Agenda tu turno en la sucursal</small>
+        </div>
+      </div>
+
+      <div class="alert alert-info border-0 mb-4">
+        <i class="bi bi-info-circle me-2"></i>
+        Recuerda que tienes un máximo de <strong>5 turnos por día</strong> por cédula.
+        Una vez agendado, tienes <strong>15 minutos</strong> para activarlo en la sucursal.
+      </div>
+
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+
+          <div *ngIf="errorMessage" class="alert alert-danger py-2">
+            <i class="bi bi-exclamation-circle me-2"></i>{{ errorMessage }}
+          </div>
+
+          <div *ngIf="successMessage" class="alert alert-success py-2">
+            {{ successMessage }}<br>
+            <small>Redirigiendo a tus turnos...</small>
+          </div>
+
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Número de Cédula</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="identification"
+                  placeholder="Ej: 1234567890"
+                  [class.is-invalid]="form.get('identification')?.invalid && form.get('identification')?.touched">
+              </div>
+              <div *ngIf="form.get('identification')?.invalid && form.get('identification')?.touched"
+                   class="text-danger small mt-1">
+                <span *ngIf="form.get('identification')?.errors?.['required']">La cédula es requerida</span>
+                <span *ngIf="form.get('identification')?.errors?.['pattern']">Solo se permiten números</span>
+                <span *ngIf="form.get('identification')?.errors?.['minlength']">Mínimo 6 dígitos</span>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Sucursal</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                <select
+                  class="form-select"
+                  formControlName="idLocation"
+                  [class.is-invalid]="form.get('idLocation')?.invalid && form.get('idLocation')?.touched">
+                  <option value="">
+                    {{ loadingLocations ? 'Cargando...' : 'Selecciona una sucursal' }}
+                  </option>
+                  <option *ngFor="let s of locations" [value]="s.id">
+                    {{ s.name }} — {{ s.city }}
+                  </option>
+                </select>
+              </div>
+              <div *ngIf="form.get('idLocation')?.invalid && form.get('idLocation')?.touched"
+                   class="text-danger small mt-1">
+                Selecciona una sucursal
+              </div>
+            </div>
+
+            <div class="mb-4">
+            <label class="form-label fw-semibold">Servicio</label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-briefcase"></i></span>
+                <select
+                class="form-select"
+                formControlName="serviceId"
+                [class.is-invalid]="form.get('serviceId')?.invalid && form.get('serviceId')?.touched">
+                <option value="">
+                    {{ loadingServices ? 'Cargando...' : 'Selecciona un servicio' }}
+                </option>
+                <option *ngFor="let s of services" [value]="s.id">
+                    {{ s.name }}
+                </option>
+                </select>
+            </div>
+            <div *ngIf="form.get('serviceId')?.invalid && form.get('serviceId')?.touched"
+                class="text-danger small mt-1">
+                Selecciona un servicio
+            </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100" [disabled]="loading || loadingLocations">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+              <i *ngIf="!loading" class="bi bi-calendar-plus me-2"></i>
+              {{ loading ? 'Agendando...' : 'Agendar Turno' }}
+            </button>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
