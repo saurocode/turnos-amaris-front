@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TurnoService } from '../../../core/services/turn';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
-import { TurnoResponse } from '../../../core/models/turn.model';
+import { TurnResponse } from '../../../core/models/turn.model';
 
 @Component({
   selector: 'app-list-turn',
@@ -15,11 +15,11 @@ import { TurnoResponse } from '../../../core/models/turn.model';
 export class ListTurnComponent implements OnInit, OnDestroy {
   private turnoService = inject(TurnoService);
 
-  turnos: TurnoResponse[] = [];
+  turnos: TurnResponse[] = [];
   loading = false;
   errorMessage = '';
   successMessage = '';
-  turnToCancel: TurnoResponse | null = null;
+  turnToCancel: TurnResponse | null = null;
   private interval: any;
 
   ngOnInit(): void {
@@ -116,7 +116,7 @@ export class ListTurnComponent implements OnInit, OnDestroy {
     });
   }
 
-  openCancelModal(turno: TurnoResponse): void {
+  openCancelModal(turno: TurnResponse): void {
     this.turnToCancel = turno;
   }
 

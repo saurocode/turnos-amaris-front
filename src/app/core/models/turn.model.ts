@@ -1,18 +1,15 @@
-export interface Turno {
-}
-
-export interface CrearTurnoDto {
+export interface CreateTurnDto {
   identification: string;
   idLocation: number;
   serviceId: number;
 }
 
-export interface ActualizarTurnoDto {
+export interface UpdateTurnDto {
   id: number;
   newStatus: string;
 }
 
-export interface TurnoResponse {
+export interface TurnResponse {
   id: number;
   turnCode: string;
   identification: string;
@@ -25,4 +22,13 @@ export interface TurnoResponse {
   dateActivation?: string;
   status: string;
   minutesRemaining: number;
+}
+
+export interface TurnFilterDto {
+  identification?: string;
+  status?: string;
+  locationId?: number;
+  serviceId?: number;
+  dateFrom?: string;
+  dateTo?: string;
 }

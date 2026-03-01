@@ -12,6 +12,7 @@ import { AuthService } from '../../../core/services/auth';
 export class NavbarComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
+  
 
   get username(): string | null {
     return this.authService.getUsername();

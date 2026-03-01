@@ -2,33 +2,36 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
   {
-    path: 'auth',
+    path: '',
+    loadComponent: () => import('./features/public/home/home.component')
+      .then(m => m.HomeComponent)
+  },
+  {
+    path: 'cliente/:cedula',
+    loadComponent: () => import('./features/public/client-turns/client-turns.component')
+      .then(m => m.ClientTurnsComponent)
+  },
+  {
+    path: 'admin',
     children: [
       {
         path: 'login',
-        loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent)
+        loadComponent: () => import('./features/auth/login/login.component')
+          .then(m => m.LoginComponent)
       },
       {
         path: 'register',
-        loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent)
-      }
-    ]
-  },
-  {
-    path: 'turnos',
-    canActivate: [authGuard],
-    children: [
-      {
-        path: '',
-        loadComponent: () => import('./features/turn/list-turn/list-turn.component').then(m => m.ListTurnComponent)
+        loadComponent: () => import('./features/auth/register/register.component')
+          .then(m => m.RegisterComponent)
       },
       {
-        path: 'crear',
-        loadComponent: () => import('./features/turn/create-turn/create-turn.component').then(m => m.CreateTurnComponent)
+        path: '',
+        canActivate: [authGuard],
+        loadComponent: () => import('./features/admin/admin-turns/admin-turns.component')
+          .then(m => m.AdminTurnsComponent)
       }
     ]
   },
-  { path: '**', redirectTo: 'auth/login' }
+  { path: '**', redirectTo: '' }
 ];

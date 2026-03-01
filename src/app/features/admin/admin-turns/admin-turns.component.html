@@ -1,0 +1,258 @@
+<div class="admin-container">
+
+  <!-- Navbar -->
+  <nav class="admin-navbar">
+    <div class="container-fluid px-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-2">
+          <div class="nav-logo">
+            <i class="bi bi-bank2"></i>
+          </div>
+          <div>
+            <span class="nav-title">Banco Amaris</span>
+            <span class="nav-subtitle d-block">Panel de Administración</span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+          <div class="admin-badge">
+            <i class="bi bi-shield-check me-1"></i>{{ username }}
+          </div>
+          <button class="btn-logout" (click)="logout()">
+            <i class="bi bi-box-arrow-right me-1"></i>Salir
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid px-4 py-4">
+
+    <!-- Alertas -->
+    <div *ngIf="errorMessage" class="modern-alert alert-error mb-3">
+      <i class="bi bi-exclamation-triangle me-2"></i>{{ errorMessage }}
+      <button class="alert-close" (click)="errorMessage=''"><i class="bi bi-x"></i></button>
+    </div>
+    <div *ngIf="successMessage" class="modern-alert alert-success mb-3">
+      <i class="bi bi-check-circle me-2"></i>{{ successMessage }}
+      <button class="alert-close" (click)="successMessage=''"><i class="bi bi-x"></i></button>
+    </div>
+
+    <!-- Tarjetas resumen -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3">
+        <div class="stat-card">
+          <div class="stat-icon bg-dark-subtle">
+            <i class="bi bi-ticket-perforated text-dark"></i>
+          </div>
+          <div class="stat-value">{{ totalTurnos }}</div>
+          <div class="stat-label">Total turnos</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card">
+          <div class="stat-icon bg-warning-subtle">
+            <i class="bi bi-clock text-warning"></i>
+          </div>
+          <div class="stat-value text-warning">{{ turnosPendientes }}</div>
+          <div class="stat-label">Pendientes</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card">
+          <div class="stat-icon bg-success-subtle">
+            <i class="bi bi-check-circle text-success"></i>
+          </div>
+          <div class="stat-value text-success">{{ turnosActivos }}</div>
+          <div class="stat-label">Activos</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card">
+          <div class="stat-icon bg-danger-subtle">
+            <i class="bi bi-x-circle text-danger"></i>
+          </div>
+          <div class="stat-value text-danger">{{ turnosExpirados }}</div>
+          <div class="stat-label">Expirados</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="modern-card mb-4">
+      <div class="modern-card-header">
+        <i class="bi bi-funnel me-2"></i>Filtros de búsqueda
+        <button class="btn-refresh ms-auto" (click)="buscar()">
+          <i class="bi bi-arrow-clockwise me-1"></i>Actualizar
+        </button>
+      </div>
+      <div class="modern-card-body">
+        <form [formGroup]="filterForm" (ngSubmit)="buscar()">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label class="filter-label">Cédula</label>
+              <div class="filter-input-wrap">
+                <i class="bi bi-person-vcard filter-icon"></i>
+                <input type="text" class="filter-input" formControlName="identification"
+                  placeholder="Buscar por cédula">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <label class="filter-label">Estado</label>
+              <select class="filter-select" formControlName="status">
+                <option value="">Todos</option>
+                <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label class="filter-label">Sede</label>
+              <select class="filter-select" formControlName="locationId">
+                <option value="">Todas</option>
+                <option *ngFor="let l of sucursales" [value]="l.id">{{ l.name }}</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label class="filter-label">Servicio</label>
+              <select class="filter-select" formControlName="serviceId">
+                <option value="">Todos</option>
+                <option *ngFor="let s of services" [value]="s.id">{{ s.name }}</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="filter-label">Rango de fechas</label>
+              <div class="d-flex gap-2">
+                <input type="date" class="filter-input" formControlName="dateFrom">
+                <input type="date" class="filter-input" formControlName="dateTo">
+              </div>
+            </div>
+          </div>
+          <div class="d-flex gap-2 mt-3">
+            <button type="submit" class="btn-filter-primary">
+              <i class="bi bi-search me-1"></i>Buscar
+            </button>
+            <button type="button" class="btn-filter-secondary" (click)="limpiarFiltros()">
+              <i class="bi bi-x-circle me-1"></i>Limpiar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="modern-card">
+      <div class="modern-card-header">
+        <i class="bi bi-table me-2"></i>Resultados
+        <span class="results-badge ms-2">{{ turnos.length }} turnos</span>
+      </div>
+
+      <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-primary"></div>
+        <p class="mt-2 text-muted">Cargando turnos...</p>
+      </div>
+
+      <div *ngIf="!loading" class="table-responsive">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Cédula</th>
+              <th>Sede</th>
+              <th>Servicio</th>
+              <th>Agendado</th>
+              <th>Expira</th>
+              <th class="text-center">Estado</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="turnos.length === 0">
+              <td colspan="8" class="empty-row">
+                <i class="bi bi-inbox me-2"></i>No hay turnos con los filtros aplicados
+              </td>
+            </tr>
+            <tr *ngFor="let turno of turnos" class="table-row">
+              <td>
+                <span class="turn-code">{{ turno.turnCode }}</span>
+              </td>
+              <td>
+                <span class="cedula-text">
+                  <i class="bi bi-person-vcard me-1 text-muted"></i>{{ turno.identification }}
+                </span>
+              </td>
+              <td>
+                <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ turno.locationName }}
+              </td>
+              <td>
+                <i class="bi bi-briefcase-fill text-primary me-1"></i>{{ turno.serviceName }}
+              </td>
+              <td>
+                <small class="text-muted">{{ turno.dateCreation | date:'dd/MM/yy HH:mm' }}</small>
+              </td>
+              <td>
+                <small [class.text-danger]="turno.status === 'Pendiente' || turno.status === 'Expirado'">
+                  {{ turno.dateExpiration | date:'HH:mm' }}
+                </small>
+              </td>
+              <td class="text-center">
+                <span class="status-badge" [ngClass]="getBadgeClass(turno.status)">
+                  {{ turno.status }}
+                </span>
+              </td>
+              <td class="text-center">
+                <div class="action-buttons">
+                  <button *ngIf="turno.status === 'Pendiente'"
+                    class="action-btn btn-activate" title="Activar"
+                    (click)="cambiarEstado(turno, 'Activo')">
+                    <i class="bi bi-check-circle"></i>
+                  </button>
+                  <button *ngIf="turno.status === 'Activo'"
+                    class="action-btn btn-complete" title="Completar"
+                    (click)="cambiarEstado(turno, 'Completado')">
+                    <i class="bi bi-check-all"></i>
+                  </button>
+                  <button *ngIf="turno.status === 'Pendiente' || turno.status === 'Activo'"
+                    class="action-btn btn-cancel" title="Cancelar"
+                    (click)="abrirModalCancelar(turno)">
+                    <i class="bi bi-x-circle"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal Cancelar -->
+<div class="modal-overlay" *ngIf="turnoAancelar" (click)="cerrarModalCancelar()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-icon">
+      <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+    </div>
+    <h5 class="fw-bold mt-3">¿Cancelar este turno?</h5>
+    <div class="turno-info-box mt-3">
+      <div class="d-flex justify-content-between mb-1">
+        <small class="text-muted">Código</small>
+        <span class="fw-bold text-primary">{{ turnoAancelar.turnCode }}</span>
+      </div>
+      <div class="d-flex justify-content-between mb-1">
+        <small class="text-muted">Cédula</small>
+        <span>{{ turnoAancelar.identification }}</span>
+      </div>
+      <div class="d-flex justify-content-between">
+        <small class="text-muted">Sede</small>
+        <span>{{ turnoAancelar.locationName }}</span>
+      </div>
+    </div>
+    <div class="d-flex gap-2 mt-3">
+      <button class="btn-modal-secondary w-50" (click)="cerrarModalCancelar()">
+        <i class="bi bi-arrow-left me-1"></i>Volver
+      </button>
+      <button class="btn-modal-danger w-50" (click)="confirmarCancelacion()">
+        <i class="bi bi-x-circle me-1"></i>Cancelar
+      </button>
+    </div>
+  </div>
+</div>
