@@ -17,15 +17,15 @@ export class TurnoService {
     return this.http.get<TurnoResponse>(`${this.apiUrl}/${id}`);
   }
 
-  crear(dto: CrearTurnoDto): Observable<TurnoResponse> {
+  create(dto: CrearTurnoDto): Observable<TurnoResponse> {
     return this.http.post<TurnoResponse>(this.apiUrl, dto);
   }
 
-  activar(id: number): Observable<TurnoResponse> {
+  activate(id: number): Observable<TurnoResponse> {
     return this.http.put<TurnoResponse>(`${this.apiUrl}/${id}/activar`, {});
   }
 
-  actualizarEstado(dto: ActualizarTurnoDto): Observable<TurnoResponse> {
+  updateStatus(dto: ActualizarTurnoDto): Observable<TurnoResponse> {
     return this.http.put<TurnoResponse>(`${this.apiUrl}/estado`, dto);
   }
 }

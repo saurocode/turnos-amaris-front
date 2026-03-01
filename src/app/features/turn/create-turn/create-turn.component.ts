@@ -39,7 +39,7 @@ export class CreateTurnComponent implements OnInit {
   successMessage = '';
 
   ngOnInit(): void {
-    this.cargarServicios();
+    this.loadServices();
     this.locationService.getAll().subscribe({
       next: (data) => {
         this.locations = data;
@@ -52,7 +52,7 @@ export class CreateTurnComponent implements OnInit {
     });
   }
 
-  cargarServicios(): void {
+  loadServices(): void {
   this.loadingServices = true;
   this.serviceService.getAll().subscribe({
     next: (data) => { this.services = data; this.loadingServices = false; },
@@ -67,7 +67,7 @@ export class CreateTurnComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.turnoService.crear(this.form.value).subscribe({
+    this.turnoService.create(this.form.value).subscribe({
       next: (turno) => {
         this.successMessage = `Turno creado: ${turno.turnCode}. Tienes ${turno.minutesRemaining} minutos para llegar a la sucursal.`;
         this.loading = false;
