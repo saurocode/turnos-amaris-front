@@ -1,71 +1,83 @@
-<div class="min-vh-100 d-flex align-items-center bg-light">
+<div class="home-container">
+
+  <!-- Fondo decorativo -->
+  <div class="bg-shape"></div>
+
   <div class="container">
+    <div class="row min-vh-100 align-items-center justify-content-center">
+      <div class="col-md-5 col-lg-4">
 
-    <div class="text-center mb-5">
-      <i class="bi bi-bank2 text-primary" style="font-size: 4rem;"></i>
-      <h1 class="fw-bold mt-2">Banco Amaris</h1>
-      <p class="text-muted fs-5">Sistema de Agendamiento de Turnos</p>
-    </div>
+        <!-- Logo y título -->
+        <div class="text-center mb-4">
+          <div class="logo-circle mx-auto mb-3">
+            <i class="bi bi-bank2"></i>
+          </div>
+          <h1 class="fw-bold text-white">Banco Amaris</h1>
+          <p class="text-white-50">Sistema de Agendamiento de Turnos</p>
+        </div>
 
-    <div class="row justify-content-center g-4">
+        <!-- Card -->
+        <div class="glass-card">
 
-      <!-- Tarjeta Cliente -->
-      <div class="col-md-5">
-        <div class="card border-0 shadow-sm h-100">
-          <div class="card-body p-4 text-center">
-            <div class="mb-3">
-              <span class="bg-primary bg-opacity-10 rounded-circle d-inline-flex p-3">
-                <i class="bi bi-person-fill text-primary" style="font-size: 2rem;"></i>
-              </span>
-            </div>
-            <h4 class="fw-bold">Soy Cliente</h4>
-            <p class="text-muted mb-4">Agenda o consulta tus turnos ingresando tu número de cédula</p>
+          <div class="text-center mb-4">
+            <h5 class="fw-bold mb-1">Consulta tus turnos</h5>
+            <p class="text-muted small mb-0">Ingresa tu número de cédula para continuar</p>
+          </div>
 
-            <form [formGroup]="form" (ngSubmit)="ingresarComoCliente()">
-              <div class="mb-3">
-                <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
-                  <input
-                    type="text"
-                    class="form-control form-control-lg"
-                    formControlName="cedula"
-                    placeholder="Número de cédula"
-                    [class.is-invalid]="form.get('cedula')?.invalid && form.get('cedula')?.touched">
-                </div>
-                <div *ngIf="form.get('cedula')?.invalid && form.get('cedula')?.touched"
-                     class="text-danger small mt-1 text-start">
-                  <span *ngIf="form.get('cedula')?.errors?.['required']">La cédula es requerida</span>
-                  <span *ngIf="form.get('cedula')?.errors?.['pattern']">Solo se permiten números</span>
-                  <span *ngIf="form.get('cedula')?.errors?.['minlength']">Mínimo 6 dígitos</span>
-                </div>
+          <form [formGroup]="form" (ngSubmit)="ingresarComoCliente()">
+
+            <div class="mb-4">
+              <label class="form-label fw-semibold small text-muted text-uppercase tracking-wide">
+                Número de Cédula
+              </label>
+              <div class="input-modern" [class.input-error]="form.get('cedula')?.invalid && form.get('cedula')?.touched">
+                <i class="bi bi-person-vcard input-icon"></i>
+                <input
+                  type="text"
+                  class="modern-input"
+                  formControlName="cedula"
+                  placeholder="Ej: 1234567890"
+                  autocomplete="off">
               </div>
-              <button type="submit" class="btn btn-primary btn-lg w-100" [disabled]="form.invalid">
-                <i class="bi bi-arrow-right-circle me-2"></i>Ver mis turnos
-              </button>
-            </form>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- Tarjeta Admin -->
-      <div class="col-md-5">
-        <div class="card border-0 shadow-sm h-100">
-          <div class="card-body p-4 text-center d-flex flex-column justify-content-center">
-            <div class="mb-3">
-              <span class="bg-dark bg-opacity-10 rounded-circle d-inline-flex p-3">
-                <i class="bi bi-shield-lock-fill text-dark" style="font-size: 2rem;"></i>
-              </span>
+              <div *ngIf="form.get('cedula')?.invalid && form.get('cedula')?.touched"
+                   class="error-text mt-2">
+                <i class="bi bi-exclamation-circle me-1"></i>
+                <span *ngIf="form.get('cedula')?.errors?.['required']">La cédula es requerida</span>
+                <span *ngIf="form.get('cedula')?.errors?.['pattern']">Solo se permiten números</span>
+                <span *ngIf="form.get('cedula')?.errors?.['minlength']">Mínimo 6 dígitos</span>
+              </div>
             </div>
-            <h4 class="fw-bold">Soy Administrador</h4>
-            <p class="text-muted mb-4">Accede al panel de administración para gestionar todos los turnos</p>
-            <a routerLink="/auth/login" class="btn btn-outline-dark btn-lg w-100">
-              <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar sesión
-            </a>
-          </div>
-        </div>
-      </div>
 
+            <button type="submit" class="btn-modern w-100" [disabled]="form.invalid">
+              <span>Ver mis turnos</span>
+              <i class="bi bi-arrow-right-circle ms-2"></i>
+            </button>
+
+          </form>
+
+          <div class="divider my-4">
+            <span>o</span>
+          </div>
+
+          <div class="text-center">
+            <p class="text-muted small mb-2">¿Necesitas más información?</p>
+            <div class="d-flex justify-content-center gap-3">
+              <div class="info-chip">
+                <i class="bi bi-clock me-1"></i>15 min por turno
+              </div>
+              <div class="info-chip">
+                <i class="bi bi-ticket-perforated me-1"></i>Máx. 5 al día
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <p class="text-center text-white-50 small mt-4">
+        Creado con ❤️ por Sarley Durango
+        </p>
+
+      </div>
     </div>
   </div>
 </div>

@@ -109,4 +109,8 @@ export class AdminTurnsComponent implements OnInit {
   }
 
   logout(): void { this.authService.logout(); }
+
+  get username(): string | null {
+  return this.authService.getUsername();
+}
 }

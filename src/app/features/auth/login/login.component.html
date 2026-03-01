@@ -1,69 +1,83 @@
-<div class="min-vh-100 d-flex align-items-center bg-light">
+<div class="login-container">
+
+  <div class="bg-shape"></div>
+
   <div class="container">
-    <div class="row justify-content-center">
+    <div class="row min-vh-100 align-items-center justify-content-center">
       <div class="col-md-5 col-lg-4">
 
+        <!-- Logo y título -->
         <div class="text-center mb-4">
-          <i class="bi bi-bank2 text-primary" style="font-size: 3rem;"></i>
-          <h2 class="fw-bold mt-2">Turnos Amaris</h2>
-          <p class="text-muted">Ingresa a tu cuenta</p>
+          <div class="logo-circle mx-auto mb-3">
+            <i class="bi bi-shield-lock"></i>
+          </div>
+          <h1 class="fw-bold text-white">Panel Admin</h1>
+          <p class="text-white-50">Banco Amaris · Acceso restringido</p>
         </div>
 
-        <div class="card shadow-sm border-0">
-          <div class="card-body p-4">
+        <!-- Card -->
+        <div class="glass-card">
 
-            <div *ngIf="errorMessage" class="alert alert-danger py-2">
-              <i class="bi bi-exclamation-circle me-2"></i>{{ errorMessage }}
+          <div class="text-center mb-4">
+            <h5 class="fw-bold mb-1">Iniciar Sesión</h5>
+            <p class="text-muted small mb-0">Ingresa tus credenciales de administrador</p>
+          </div>
+
+          <div *ngIf="errorMessage" class="error-alert mb-3">
+            <i class="bi bi-exclamation-triangle me-2"></i>{{ errorMessage }}
+          </div>
+
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small text-muted text-uppercase tracking-wide">
+                Usuario
+              </label>
+              <div class="input-modern" [class.input-error]="form.get('username')?.invalid && form.get('username')?.touched">
+                <i class="bi bi-person input-icon"></i>
+                <input
+                  type="text"
+                  class="modern-input"
+                  formControlName="username"
+                  placeholder="Tu usuario"
+                  autocomplete="off">
+              </div>
+              <div *ngIf="form.get('username')?.invalid && form.get('username')?.touched"
+                   class="error-text mt-1">
+                <i class="bi bi-exclamation-circle me-1"></i>Usuario requerido (mín. 3 caracteres)
+              </div>
             </div>
 
-            <form [formGroup]="form" (ngSubmit)="onSubmit()">
-              <div class="mb-3">
-                <label class="form-label fw-semibold">Usuario</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-person"></i></span>
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="username"
-                    placeholder="Tu usuario"
-                    [class.is-invalid]="form.get('username')?.invalid && form.get('username')?.touched">
-                </div>
-                <div *ngIf="form.get('username')?.invalid && form.get('username')?.touched"
-                     class="text-danger small mt-1">
-                  El usuario es requerido (mínimo 3 caracteres)
-                </div>
+            <div class="mb-4">
+              <label class="form-label fw-semibold small text-muted text-uppercase tracking-wide">
+                Contraseña
+              </label>
+              <div class="input-modern" [class.input-error]="form.get('password')?.invalid && form.get('password')?.touched">
+                <i class="bi bi-lock input-icon"></i>
+                <input
+                  type="password"
+                  class="modern-input"
+                  formControlName="password"
+                  placeholder="Tu contraseña">
               </div>
-
-              <div class="mb-4">
-                <label class="form-label fw-semibold">Contraseña</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                  <input
-                    type="password"
-                    class="form-control"
-                    formControlName="password"
-                    placeholder="Tu contraseña"
-                    [class.is-invalid]="form.get('password')?.invalid && form.get('password')?.touched">
-                </div>
-                <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched"
-                     class="text-danger small mt-1">
-                  La contraseña es requerida (mínimo 6 caracteres)
-                </div>
+              <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched"
+                   class="error-text mt-1">
+                <i class="bi bi-exclamation-circle me-1"></i>Contraseña requerida (mín. 6 caracteres)
               </div>
+            </div>
 
-              <button type="submit" class="btn btn-primary w-100" [disabled]="loading">
-                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
-                <i *ngIf="!loading" class="bi bi-box-arrow-in-right me-2"></i>
-                {{ loading ? 'Ingresando...' : 'Ingresar' }}
-              </button>
-            </form>
+            <button type="submit" class="btn-modern w-100" [disabled]="loading || form.invalid">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+              <span>{{ loading ? 'Ingresando...' : 'Ingresar' }}</span>
+              <i *ngIf="!loading" class="bi bi-arrow-right-circle ms-2"></i>
+            </button>
 
-          </div>
+          </form>
+
         </div>
 
-        <p class="text-center mt-3 text-muted">
-          ¿No tienes cuenta?
-          <a routerLink="/auth/register" class="text-primary fw-semibold">Regístrate aquí</a>
+        <p class="text-center text-white-50 small mt-4">
+          Creado con ❤️ por Sarley Durango
         </p>
 
       </div>

@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth';
 
@@ -10,9 +10,9 @@ import { AuthService } from '../../../core/services/auth';
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {
-  @Input() showClientLinks = true;
   private authService = inject(AuthService);
   private router = inject(Router);
+  
 
   get username(): string | null {
     return this.authService.getUsername();
