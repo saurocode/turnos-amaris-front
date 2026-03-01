@@ -10,15 +10,15 @@
 
     <div class="collapse navbar-collapse" id="navMenu">
       <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/turnos">
-            <i class="bi bi-list-ul me-1"></i>Mis Turnos
-          </a>
+        <li class="nav-item" *ngIf="showClientLinks">
+            <a class="nav-link" routerLink="/turns">
+            <i class="bi bi-list"></i> Mis Turnos
+            </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/turnos/crear">
-            <i class="bi bi-plus-circle me-1"></i>Nuevo Turno
-          </a>
+        <li class="nav-item" *ngIf="showClientLinks">
+            <a class="nav-link" routerLink="/turns/new">
+            <i class="bi bi-plus-circle"></i> Nuevo Turno
+            </a>
         </li>
       </ul>
 
