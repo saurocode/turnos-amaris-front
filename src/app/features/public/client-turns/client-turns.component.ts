@@ -44,83 +44,89 @@ export class ClientTurnsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.cedula = this.route.snapshot.paramMap.get('cedula') ?? '';
     if (!this.cedula) { this.router.navigate(['/']); return; }
-    this.cargarDatos();
-    this.intervalo = setInterval(() => this.cargarTurnos(), 30000);
+    this.loadData();
+    this.intervalo = setInterval(() => this.loadTurns(), 30000);
   }
 
   ngOnDestroy(): void {
     if (this.intervalo) clearInterval(this.intervalo);
   }
 
-  cargarDatos(): void {
+  loadData(): void {
     this.http.get<ApiResponse<Location[]>>(`${this.apiUrl}/locations`)
       .pipe(map(r => r.data)).subscribe(data => this.locations = data);
     this.http.get<ApiResponse<Service[]>>(`${this.apiUrl}/services`)
       .pipe(map(r => r.data)).subscribe(data => this.services = data);
-    this.cargarTurnos();
+    this.loadTurns();
   }
 
-  cargarTurnos(): void {
+  loadTurns(): void {
     this.loading = true;
     this.http.get<ApiResponse<TurnResponse[]>>(`${this.apiUrl}/turns/${this.cedula}`)
       .pipe(map(r => r.data)).subscribe({
         next: (data) => { this.turnos = data; this.loading = false; },
-        error: () => { this.errorMessage = 'Error al cargar turnos'; this.loading = false; }
+        error: (err) => {
+          this.errorMessage = this.getErrorMessage(err);
+          this.loading = false;
+        }
       });
   }
 
-  agendarTurno(): void {
+  scheduleTurn(): void {
     if (this.form.invalid) return;
     this.loadingForm = true;
     this.errorMessage = '';
-
     const dto = {
       identification: this.cedula,
       idLocation: +this.form.value.idLocation,
       serviceId: +this.form.value.serviceId
     };
-
     this.http.post<ApiResponse<TurnResponse>>(`${this.apiUrl}/turns`, dto)
       .pipe(map(r => r.data)).subscribe({
         next: (turno) => {
-          this.successMessage = `✅ Turno ${turno.turnCode} agendado. Tienes 15 minutos para llegar.`;
+          this.successMessage = `Turno ${turno.turnCode} agendado. Tienes 15 minutos para llegar.`;
           this.loadingForm = false;
           this.mostrarFormulario = false;
           this.form.reset();
-          this.cargarTurnos();
+          this.loadTurns();
         },
         error: (err) => {
-          this.errorMessage = err.error?.message || 'Error al agendar turno';
+          this.errorMessage = this.getErrorMessage(err);
           this.loadingForm = false;
         }
       });
   }
 
-  activarTurno(id: number): void {
+  activateTurn(id: number): void {
+    this.errorMessage = '';
+    this.successMessage = '';
     this.http.put<ApiResponse<TurnResponse>>(`${this.apiUrl}/turns/${id}/activate`, {})
       .pipe(map(r => r.data)).subscribe({
         next: (turno) => {
           this.successMessage = `Turno ${turno.turnCode} activado correctamente`;
-          this.cargarTurnos();
+          this.loadTurns();
         },
-        error: (err) => { this.errorMessage = err.error?.message || 'Error al activar'; }
+        error: (err) => { this.errorMessage = this.getErrorMessage(err); }
       });
   }
 
-  abrirModalCancelar(turno: TurnResponse): void { this.turnoAancelar = turno; }
-  cerrarModalCancelar(): void { this.turnoAancelar = null; }
+  openCancelModal(turno: TurnResponse): void { this.turnoAancelar = turno; }
+  closeCancelModal(): void { this.turnoAancelar = null; }
 
-  confirmarCancelacion(): void {
+  confirmCancellation(): void {
     if (!this.turnoAancelar) return;
     this.http.put<ApiResponse<TurnResponse>>(`${this.apiUrl}/turns/status`,
       { id: this.turnoAancelar.id, newStatus: 'Cancelado' })
       .pipe(map(r => r.data)).subscribe({
         next: () => {
-          this.successMessage = 'Turno cancelado';
-          this.cerrarModalCancelar();
-          this.cargarTurnos();
+          this.successMessage = 'Turno cancelado correctamente';
+          this.closeCancelModal();
+          this.loadTurns();
         },
-        error: (err) => { this.errorMessage = err.error?.message || 'Error al cancelar'; }
+        error: (err) => {
+          this.errorMessage = this.getErrorMessage(err);
+          this.closeCancelModal();
+        }
       });
   }
 
@@ -132,7 +138,7 @@ export class ClientTurnsComponent implements OnInit, OnDestroy {
     return c[status] ?? 'bg-secondary';
   }
 
-  getIconEstado(status: string): string {
+  getStatusIcon(status: string): string {
     const i: Record<string, string> = {
       'Pendiente': 'bi-clock', 'Activo': 'bi-check-circle',
       'Completado': 'bi-check-all', 'Expirado': 'bi-x-circle', 'Cancelado': 'bi-slash-circle'
@@ -140,5 +146,9 @@ export class ClientTurnsComponent implements OnInit, OnDestroy {
     return i[status] ?? 'bi-circle';
   }
 
-  volver(): void { this.router.navigate(['/']); }
+  goBack(): void { this.router.navigate(['/']); }
+
+  private getErrorMessage(err: any): string {
+  return err.error?.message || err.error?.error || err.message || 'Error inesperado';
+}
 }

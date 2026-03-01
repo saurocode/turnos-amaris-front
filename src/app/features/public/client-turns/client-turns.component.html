@@ -17,7 +17,7 @@
           <div class="cedula-badge">
             <i class="bi bi-person-vcard me-1"></i>{{ cedula }}
           </div>
-          <button class="btn-salir" (click)="volver()">
+          <button class="btn-salir" (click)="goBack()">
             <i class="bi bi-box-arrow-left me-1"></i>Salir
           </button>
         </div>
@@ -60,7 +60,7 @@
           Máximo <strong>5 turnos por día</strong> · Tienes <strong>15 minutos</strong> para activarlo en la sucursal
         </div>
 
-        <form [formGroup]="form" (ngSubmit)="agendarTurno()">
+        <form [formGroup]="form" (ngSubmit)="scheduleTurn()">
           <div class="row g-3">
             <div class="col-md-6">
               <label class="filter-label">Sede</label>
@@ -124,7 +124,7 @@
               <i class="bi bi-ticket-perforated me-1"></i>{{ turno.turnCode }}
             </span>
             <span class="status-badge" [ngClass]="getBadgeClass(turno.status)">
-              <i class="bi {{ getIconEstado(turno.status) }} me-1"></i>{{ turno.status }}
+              <i class="bi {{ getStatusIcon(turno.status) }} me-1"></i>{{ turno.status }}
             </span>
           </div>
 
@@ -180,10 +180,10 @@
 
           <!-- Footer acciones -->
           <div *ngIf="turno.status === 'Pendiente'" class="turno-card-footer">
-            <button class="btn-activar" (click)="activarTurno(turno.id)">
+            <button class="btn-activar" (click)="activateTurn(turno.id)">
               <i class="bi bi-check-circle me-1"></i>Activar en sucursal
             </button>
-            <button class="btn-cancelar-turno" (click)="abrirModalCancelar(turno)">
+            <button class="btn-cancelar-turno" (click)="openCancelModal(turno)">
               <i class="bi bi-x-circle"></i>
             </button>
           </div>
@@ -196,7 +196,7 @@
 </div>
 
 <!-- Modal Cancelar -->
-<div class="modal-overlay" *ngIf="turnoAancelar" (click)="cerrarModalCancelar()">
+<div class="modal-overlay" *ngIf="turnoAancelar" (click)="closeCancelModal()">
   <div class="modal-card" (click)="$event.stopPropagation()">
     <div class="modal-icon">
       <i class="bi bi-exclamation-triangle-fill text-warning"></i>
@@ -218,10 +218,10 @@
     </div>
     <p class="text-muted small mt-3">Esta acción no se puede deshacer.</p>
     <div class="d-flex gap-2 mt-2">
-      <button class="btn-modal-secondary w-50" (click)="cerrarModalCancelar()">
+      <button class="btn-modal-secondary w-50" (click)="closeCancelModal()">
         <i class="bi bi-arrow-left me-1"></i>Volver
       </button>
-      <button class="btn-modal-danger w-50" (click)="confirmarCancelacion()">
+      <button class="btn-modal-danger w-50" (click)="confirmCancellation()">
         <i class="bi bi-x-circle me-1"></i>Sí, cancelar
       </button>
     </div>
