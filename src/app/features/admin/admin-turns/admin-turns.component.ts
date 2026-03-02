@@ -6,7 +6,6 @@ import { TurnoService } from '../../../core/services/turn';
 import { LocationService } from '../../../core/services/location';
 import { ServiceService } from '../../../core/services/service';
 import { AuthService } from '../../../core/services/auth';
-import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 import { TurnResponse, TurnFilterDto, UpdateTurnDto } from '../../../core/models/turn.model';
 import { Location } from '../../../core/models/location.model';
 import { Service } from '../../../core/models/service.model';
@@ -14,7 +13,7 @@ import { Service } from '../../../core/models/service.model';
 @Component({
   selector: 'app-admin-turns',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NavbarComponent],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './admin-turns.component.html',
   styleUrl: './admin-turns.component.css'
 })
