@@ -1,59 +1,108 @@
-# TurnosAmarisFront
+# Turnos Amaris — Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.18.
+Aplicación web para el sistema de agendamiento de turnos bancarios.  
+Construida con **Angular 20** y **Bootstrap 5**.
 
-## Development server
+---
 
-To start a local development server, run:
+## Requisitos previos
+
+| Herramienta | Versión mínima |
+|---|---|
+| Node.js | 18+ |
+| Angular CLI | 20 |
+| npm | 9+ |
+
+Verifica tu versión de Node:
+```bash
+node -v
+ng version
+```
+
+---
+
+### 1. Instalar dependencias
+
+```bash
+cd turnos-amaris-front
+npm install
+```
+
+### 2. Configurar la URL del backend
+
+En `src/environments/environment.ts` verifica que apunte a tu API local:
+
+```typescript
+export const environment = {
+  production: false,
+  apiUrl: 'https://localhost:44345/api'
+};
+```
+
+> Ajusta el puerto según donde corra tu backend.
+
+### 3. Iniciar la app
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Abre el navegador en **`http://localhost:4200`**
 
-## Code scaffolding
+---
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## 🗺️ Flujo de la aplicación
 
-```bash
-ng generate component component-name
+```
+http://localhost:4200/
+│
+├── Soy Cliente
+│   └── Ingresa cédula → /cliente/:cedula
+│       ├── Ver mis turnos
+│       ├── Agendar nuevo turno
+│       ├── Activar turno pendiente
+│       └── Cancelar turno
+│
+└── http://localhost:4200/admin/login   - Url Admin
+    └── Login admin → /admin
+        ├── Ver todos los turnos
+        ├── Filtrar por cédula, estado, sede, servicio y fecha
+        ├── Activar / Completar turnos
+        └── Cancelar turnos
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
+## Accesos
+
+| Perfil | URL | Credenciales |
+|---|---|---|
+| Cliente | `http://localhost:4200` | Solo necesita su cédula |
+| Administrador | `http://localhost:4200/admin/login` | `admin` / `admin123*` |
+
+> La URL del admin no está enlazada en ninguna parte visible de la app.
+
+---
+
+## Estructura del proyecto
+
 ```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
+src/app/
+├── core/
+│   ├── guards/         # Protege rutas del admin (authGuard)
+│   ├── interceptors/   # Inyecta el JWT en cada petición (authInterceptor)
+│   ├── models/         # Interfaces TypeScript
+│   └── services/       # AuthService, TurnoService, SucursalService...
+├── features/
+│   ├── public/
+│   │   ├── home/           # Pantalla de inicio — ingreso por cédula
+│   │   └── client-turns/   # Vista del cliente — sus turnos
+│   ├── auth/
+│   │   ├── login/          # Login administrador
+│   │   └── register/       # Registro administrador
+│   └── admin/
+│       └── admin-turns/    # Panel admin con filtros
+└── shared/
+    └── components/
+        └── navbar/         # Navbar del panel admin
 ```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
