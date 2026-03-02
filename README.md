@@ -39,8 +39,6 @@ export const environment = {
 };
 ```
 
-> Ajusta el puerto según donde corra tu backend.
-
 ### 3. Iniciar la app
 
 ```bash
